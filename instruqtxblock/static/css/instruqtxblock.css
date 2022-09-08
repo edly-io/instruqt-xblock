@@ -1,0 +1,9 @@
+/* CSS for InstruqtXBlock */
+
+.instruqtxblock_block .count {
+    font-weight: bold;
+}
+
+.instruqtxblock_block p {
+    cursor: pointer;
+}
