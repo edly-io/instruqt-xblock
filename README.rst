@@ -1,14 +1,14 @@
 XBlock to embed Instruqt track in Open edX
-#############################
+##########################################
 
-Testing with Docker
-********************
+How to use
+**********
 
-This XBlock comes with a Docker test environment ready to build, based on the xblock-sdk workbench. To build and run it::
+This XBlock can be install using pip:
 
-    $ make dev.run
+    $ pip install instruqt-xblock
 
-The XBlock SDK Workbench, including this XBlock, will be available on the list of XBlocks at http://localhost:8000
+Once installed add `instruqtxblock` in advanced module list of course advanced settings. It should availabe in Advanced component list of course unit afterwards.
 
 Translating
 *************
@@ -41,9 +41,6 @@ Mark translatable strings in python::
 
     # Translators: This comment will appear in the `.po` file.
     message = _("This will be marked.")
-
-See `edx-developer-guide <https://edx.readthedocs.io/projects/edx-developer-guide/en/latest/internationalization/i18n.html#python-source-code>`_
-for more information.
 
 You can also use ``gettext`` to mark strings in javascript::
 

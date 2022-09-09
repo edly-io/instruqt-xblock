@@ -2,18 +2,17 @@
 
 import json
 import logging
-import pkg_resources
 
+import pkg_resources
 from django.template import Context, Template
 from django.utils import translation
-
+from webob import Response
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer, String
+from xblock.fields import Integer, Scope, String
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 from xblockutils.studio_editable import StudioEditableXBlockMixin
-from webob import Response
 
 from .utils import _
 
@@ -62,37 +61,16 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
         return data.decode("utf8")
 
     def render_template(self, template_path, context):
+        """
+        Renders template fetch from a path after injecting context
+        """
         template_str = self.resource_string(template_path)
         template = Template(template_str)
         return template.render(Context(context))
 
-    # def studio_view(self, context=None):
-        # template = self.render_template("static/html/studio.html", {
-        #     "self": self,
-        # })
-        # frag = Fragment(template)
-        # frag = super().studio_view(context)
-        # frag.add_css(self.resource_string("static/css/studio.css"))
-        # frag.add_javascript(self.resource_string("static/js/src/studio.js"))
-        # return frag
-
-    # @XBlock.handler
-    # def studio_submit(self, request, suffix=""):
-    #     self.display_name = request.params["display_name"]
-    #     self.track_embed_code = request.params["track_embed_code"]
-    #     self.track_iframe_width = request.params["track_iframe_width"]
-    #     self.track_iframe_height = request.params["track_iframe_height"]        
-
-    #     return Response(
-    #         json.dumps({"result": "success"}),
-    #         content_type="application/json",
-    #         charset="utf8",
-    #     )
-
-    def student_view(self, context=None):
+    def student_view(self, context=None):  # lint-amnesty, pylint: disable=unused-argument
         """
-        The primary view of the InstruqtXBlock, shown to students
-        when viewing courses.
+        The primary view of the InstruqtXBlock, shown to students when viewing courses.
         """
         template = self.render_template("static/html/instruqtxblock.html", {"self": self})
         frag = Fragment(template)
@@ -108,7 +86,7 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
         return frag
 
     @XBlock.json_handler
-    def completion_handler(self, data, suffix=''):
+    def completion_handler(self, data, suffix=''):  # lint-amnesty, pylint: disable=unused-argument
         """
         Handler to trigger completion event
         """
