@@ -1,9 +1,27 @@
 /* CSS for InstruqtXBlock */
 
-.instruqtxblock_block .count {
-    font-weight: bold;
+.instruqtxblock_block {
+    position: relative;
 }
 
-.instruqtxblock_block p {
-    cursor: pointer;
+.btn-fullscreen {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    border: solid 3px #119e6f;
+    padding: 6px;
+}
+
+.btn-fullscreen:hover { 
+    text-decoration: none; 
+}
+
+.btn-fullscreen:before {
+    content: "\f065";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #119e6f;
+    font-size: 18px; 
 }
