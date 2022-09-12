@@ -8,7 +8,7 @@ This XBlock can be install using pip:
 
     $ pip install instruqt-xblock
 
-Once installed add `instruqtxblock` in advanced module list of course advanced settings. It should availabe in Advanced component list of course unit afterwards.
+Once installed add ``instruqtxblock`` in advanced module list of course advanced settings. It should availabe in Advanced component list of course unit afterwards.
 
 Translating
 *************

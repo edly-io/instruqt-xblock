@@ -35,6 +35,7 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     track_embed_code = String(
         display_name=_("Track embed code"),
         multiline_editor=True,
+        default='',
         help=_("Copy track code from instruqt track details page and paste here"),
         scope=Scope.settings,
     )
