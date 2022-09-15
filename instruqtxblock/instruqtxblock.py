@@ -9,7 +9,7 @@ from django.utils import translation
 from webob import Response
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope, String
+from xblock.fields import Boolean, Integer, Scope, String
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 from xblockutils.studio_editable import StudioEditableXBlockMixin
@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 
 @XBlock.needs("i18n")
+@XBlock.needs('user')
 class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     """
     This xblock embeds instruqt track in Open edX.
@@ -43,7 +44,7 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     track_iframe_width = Integer(
         display_name=_("Width"),
         help=_("Width of IFRAME having instruqt track"),
-        default=1140,
+        default=940,
         scope=Scope.settings,
     )
 
@@ -54,12 +55,59 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
         scope=Scope.settings,
     )
 
-    editable_fields = ('display_name', 'track_embed_code', 'track_iframe_width', 'track_iframe_height')
+    total_challenges = Integer(
+        help=_("Number of challenges in track"),
+        default=3,
+        scope=Scope.settings,
+    )
+
+    completed_challenges = Integer(
+        help=_("Number of challenges completed by user"),
+        default=0,
+        scope=Scope.user_state,
+    )
+
+    has_score = Boolean(
+        display_name=_("Calculate score on challege completion"),
+        help=_(
+            "Selecting this option means score is calculated every time a learner completes a challenge. e.g \
+                if 2 out of 5 challenges are completed score would be 0.4 (2/5)"
+        ),
+        default=False,
+        scope=Scope.settings,
+    )
+
+    anonymize_user = Boolean(
+        display_name=_("Anonymize user info before sending it to Instruqt"),
+        help=_(
+            "If True anonymouse id of user is sent to instruqt while creating session. Please don't\
+                change this setting after users have started track to avoid loosing user's progress"
+        ),
+        default=False,
+        scope=Scope.settings,
+    )
+
+    editable_fields = (
+        'display_name', 'track_embed_code', 'track_iframe_width',
+        'track_iframe_height', 'has_score', 'anonymize_user'
+    )
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
+
+    def _get_user_id(self):
+        """
+        Returns external user id for lti type when runtime is LMS or returns `student_1` for other runtimes like workbench
+        """
+        user_service = self.runtime.service(self, 'user')
+        user_id = 'student_1'
+        if self.anonymize_user and hasattr(user_service, 'get_external_user_id'):
+            user_id = user_service.get_external_user_id('lti')
+        else:
+            user_id = user_service.get_current_user().emails[0]
+        return user_id
 
     def render_template(self, template_path, context):
         """
@@ -73,7 +121,12 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
         """
         The primary view of the InstruqtXBlock, shown to students when viewing courses.
         """
-        template = self.render_template("static/html/instruqtxblock.html", {"self": self})
+        user_id = self._get_user_id()
+        track_url = '{}&icp_user_id={}'.format(self.track_embed_code, user_id)
+        template = self.render_template(
+            "static/html/instruqtxblock.html",
+            {"self": self, "track_url": track_url}
+        )
         frag = Fragment(template)
         frag.add_css(self.resource_string("static/css/instruqtxblock.css"))
 
@@ -89,17 +142,47 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     @XBlock.json_handler
     def completion_handler(self, data, suffix=''):  # lint-amnesty, pylint: disable=unused-argument
         """
-        Handler to trigger completion event
+        Handler to trigger completion and score event
         """
-        save_completion = False
-        try:
-            self.emit_completion(1.0)
-            save_completion = True
-        except BaseException as exp:
-            log.error("Error while marking completion %s", exp)
+        save_track_completion, save_challenge_completion = False, False
+
+        if data['event'] == "track.completed":
+            try:
+                self.emit_completion(1.0)
+                save_track_completion = True
+            except BaseException as exp:
+                log.error("Error while marking track completion %s", exp)
+
+        if data['event'] == "track.challenge_completed":
+            try:
+                total_challenges = self.total_challenges
+                # total_challenges = data['params']['total_challenges']
+                if self.completed_challenges < total_challenges:
+                    completed_challenges = self.completed_challenges + 1
+
+                self.completed_challenges = completed_challenges
+                self.total_challenges = total_challenges
+                if self.has_score:
+                    grade_dict = {
+                        'value': round(completed_challenges/total_challenges, 2),
+                        'max_value': 1,
+                        'only_if_higher': True,
+                    }
+                    self.runtime.publish(self, 'grade', grade_dict)
+                save_challenge_completion = True
+            except BaseException as exp:
+                log.error("Error while marking challenge completion %s", exp)
 
         return Response(
-            json.dumps({"result": {"save_completion": save_completion}}),
+            json.dumps(
+                {
+                    "result":
+                    {
+                        "save_track_completion": save_track_completion,
+                        "save_challenge_completion": save_challenge_completion,
+                    }
+                }
+            ),
             content_type="application/json",
             charset="utf8",
         )
