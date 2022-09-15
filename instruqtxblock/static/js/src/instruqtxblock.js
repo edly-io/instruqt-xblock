@@ -44,7 +44,7 @@ function InstruqtXBlock(runtime, element) {
                     event.data.params
                 );
 
-                if (event.data.event === "track.completed") {
+                if (event.data.event === "track.completed" || event.data.event === "track.challenge_completed") {
                     completeTrack(event.data);
                 }
             },
