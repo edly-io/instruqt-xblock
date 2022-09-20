@@ -12,16 +12,17 @@ About Instruqt XBlock
 
 Instruqt XBlock allows Open edX users to embed Instruqt tracks inside an Open edX course. It provides ability to track
 learner progress and reflects track completion in Open edX. Using this block instructor can compute score of a track using this
-formula
+formula::
 
-```
-SCORE = NUMBER OF COMPLETED CHALLENGES / TOTAL CHALLENGES IN TRACK
-```
+
+    $ SCORE = NUMBER OF COMPLETED CHALLENGES / TOTAL CHALLENGES IN TRACK
+
 
 How to use Instruqt XBlock
 **************************
 
-Instruqt XBlock can be installed using pip:
+Instruqt XBlock can be installed using pip::
+
 
     $ pip install instruqt-xblock
 
