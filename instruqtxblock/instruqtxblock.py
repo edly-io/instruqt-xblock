@@ -56,10 +56,9 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     )
 
     total_challenges = Integer(
-        display_name=_("Total challenges in track"),
         help=_("Number of challenges in track. Set it to 0 if track does not have any challenge"),
-        default=3,
-        scope=Scope.settings,
+        default=0,
+        scope=Scope.user_state,
     )
 
     completed_challenges = Integer(
@@ -78,10 +77,9 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
         scope=Scope.settings,
     )
 
-    # TODO: Remove total_challenges for field list when Instruqt provides total_challenges in event callback
     editable_fields = (
         'display_name', 'track_embed_code', 'track_iframe_width',
-        'track_iframe_height', 'has_score', 'total_challenges'
+        'track_iframe_height', 'has_score'
     )
 
     def resource_string(self, path):
@@ -147,16 +145,13 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
 
         if data['event'] == "track.challenge_completed":
             try:
-                total_challenges = self.total_challenges
-                # TODO: Uncomment the line below when Instruqt provides total_challenges in event callback
-                # total_challenges = data['params']['total_challenges']
+                total_challenges = data['params']['total_challenges']
                 if self.completed_challenges < total_challenges:
                     completed_challenges = self.completed_challenges + 1
 
                 self.completed_challenges = completed_challenges
-                # TODO: Uncomment the line below when Instruqt provides total_challenges in event callback
-                # self.total_challenges = total_challenges
-                if self.has_score:
+                self.total_challenges = total_challenges
+                if self.has_score and total_challenges > 0:
                     grade_dict = {
                         'value': round(completed_challenges/total_challenges, 2),
                         'max_value': 1,
