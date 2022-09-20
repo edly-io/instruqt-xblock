@@ -15,7 +15,7 @@ learner progress and reflects track completion in Open edX. Using this block ins
 formula
 
 ```
-SCORE = NUMBER OF COMPETED CHALENGES / TOTAL CHALENGES IN TRACK
+SCORE = NUMBER OF COMPLETED CHALLENGES / TOTAL CHALLENGES IN TRACK
 ```
 
 How to use Instruqt XBlock
