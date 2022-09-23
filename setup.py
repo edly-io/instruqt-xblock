@@ -49,10 +49,14 @@ def load_requirements(*requirements_paths):
             # fine to add constraints to an unconstrained package,
             # raise an error if there are already constraints in place
             if existing_version_constraints and existing_version_constraints != version_constraints:
-                raise BaseException(f'Multiple constraint definitions found for {package}:'
-                                    f' "{existing_version_constraints}" and "{version_constraints}".'
-                                    f'Combine constraints into one location with {package}'
-                                    f'{existing_version_constraints},{version_constraints}.')
+                raise BaseException('''Multiple constraint definitions found for {package}: 
+                                    "{existing_version_constraints}" and "{version_constraints}". 
+                                    Combine constraints into one location with {package} 
+                                    {existing_version_constraints},{version_constraints}.'''. format(
+                                        package = package,
+                                        existing_version_constraints = existing_version_constraints,
+                                        version_constraints = version_constraints,
+                                    ))
             if add_if_not_present or package in current_requirements:
                 current_requirements[package] = version_constraints
 
@@ -74,7 +78,7 @@ def load_requirements(*requirements_paths):
                     add_version_constraint_or_raise(line, requirements, False)
 
     # process back into list of pkg><=constraints strings
-    constrained_requirements = [f'{pkg}{version or ""}' for (pkg, version) in sorted(requirements.items())]
+    constrained_requirements = ['{pkg}{version}'.format(pkg = pkg, version = version or "") for (pkg, version) in sorted(requirements.items())]
     return constrained_requirements
 
 
@@ -130,7 +134,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
-    python_requires=">=3.8",
+    python_requires=">=3.5",
     license="AGPL 3.0",
     zip_safe=False,
     keywords='Python edx',
@@ -140,7 +144,7 @@ setup(
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.5',
     ],
     entry_points={
         'xblock.v1': [
