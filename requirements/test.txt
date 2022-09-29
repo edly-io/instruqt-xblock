@@ -120,5 +120,6 @@ xblock==1.6.1
 xblock-utils==3.0.0
     # via -r requirements/base.txt
 
+xblock-sdk==0.5.1
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
