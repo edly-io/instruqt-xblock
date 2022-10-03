@@ -1,4 +1,5 @@
-[![Python CI](https://github.com/edly-io/instruqt-xblock/actions/workflows/ci.yml/badge.svg)](https://github.com/edly-io/instruqt-xblock/actions/workflows/ci.yml)
+.. |Python CI| image:: https://github.com/edly-io/instruqt-xblock/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/edly-io/instruqt-xblock/actions/workflows/ci.yml
 
 
 XBlock to embed Instruqt track in Open edX
