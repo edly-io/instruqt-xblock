@@ -1,3 +1,6 @@
+[![Python CI](https://github.com/edly-io/instruqt-xblock/actions/workflows/ci.yml/badge.svg)](https://github.com/edly-io/instruqt-xblock/actions/workflows/ci.yml)
+
+
 XBlock to embed Instruqt track in Open edX
 ##########################################
 

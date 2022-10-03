@@ -3,4 +3,5 @@ branch = True
 data_file = .coverage
 source=instruqtxblock
 omit =
-    tests
+    tests/*
+    */locale/*

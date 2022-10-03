@@ -6,11 +6,11 @@ import logging
 import pkg_resources
 from django.template import Context, Template
 from django.utils import translation
+from web_fragments.fragment import Fragment
 from webob import Response
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
 from xblock.fields import Boolean, Integer, Scope, String
-from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 from xblockutils.studio_editable import StudioEditableXBlockMixin
 
@@ -148,6 +148,9 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
                 total_challenges = data['params']['total_challenges']
                 if self.completed_challenges < total_challenges:
                     completed_challenges = self.completed_challenges + 1
+                else:
+                    # Reset completed_challenges if learner has already completed track
+                    completed_challenges = 0
 
                 self.completed_challenges = completed_challenges
                 self.total_challenges = total_challenges

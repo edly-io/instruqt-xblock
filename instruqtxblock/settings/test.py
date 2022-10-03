@@ -1,15 +1,11 @@
 """
 Stub Settings
 """
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-    },
-}
-INSTALLED_APPS = (
-    'instruqtxblock',
-)
-LOCALE_PATHS = [
-    'instruqtxblock/locale',
-]
-SECRET_KEY = 'SECRET_KEY'
+
+from workbench.settings import *
+
+# The callable to use to configure logging
+LOGGING_CONFIG = "logging.config.dictConfig"
+
+# Custom logging configuration.
+LOGGING = {}
