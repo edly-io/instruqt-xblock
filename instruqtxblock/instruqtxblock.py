@@ -68,7 +68,7 @@ class InstruqtXBlock(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     )
 
     has_score = Boolean(
-        display_name=_("Calculate score on challege completion"),
+        display_name=_("Calculate score on challenge completion"),
         help=_(
             "Selecting this option means score is calculated every time a learner completes a challenge. e.g \
                 if 2 out of 5 challenges are completed score would be 0.4 (2/5)"
