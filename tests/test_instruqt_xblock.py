@@ -39,7 +39,7 @@ class TestInstruqtXBlock(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.dumps(response.json), json.dumps(expected_response_json))
 
-    def test_completion_handler_on_challege_completed(self):
+    def test_completion_handler_on_challenge_completed(self):
         """ Test completion_handler method when challenge is completed """
         request_body = b"""{
             "event": "track.challenge_completed",
