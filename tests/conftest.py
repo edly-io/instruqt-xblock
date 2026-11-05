@@ -19,14 +19,25 @@ def generate_scope_ids(runtime, block_type):
     return ScopeIds('user', block_type, def_id, usage_id)
 
 
+def make_block():
+    """Build an InstruqtXBlock backed by an in-memory workbench runtime."""
+    runtime = WorkbenchRuntime()
+    db_model = KvsFieldData(DictKeyValueStore())
+    ids = generate_scope_ids(runtime, 'instruqtxblock')
+    block = InstruqtXBlock(runtime, db_model, scope_ids=ids)
+    block.usage_id = Mock()
+    return block
+
+
 @pytest.fixture(scope="class")
 def instruqt_xblock(request):
     """Instruct XBlock pytest fixture."""
-    runtime = WorkbenchRuntime()
-    key_store = DictKeyValueStore()
-    db_model = KvsFieldData(key_store)
-    ids = generate_scope_ids(runtime, 'instruqtxblock')
-    instruqt_xblock = InstruqtXBlock(runtime, db_model, scope_ids=ids)
-    instruqt_xblock.usage_id = Mock()
+    instruqt_xblock = make_block()
     instruqt_xblock.has_score = True
     request.cls.instruqt_xblock = instruqt_xblock
+
+
+@pytest.fixture
+def block():
+    """Fresh InstruqtXBlock per test."""
+    return make_block()

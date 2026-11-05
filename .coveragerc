@@ -2,6 +2,7 @@
 branch = True
 data_file = .coverage
 source=instruqtxblock
-omit =
-    tests/*
-    */locale/*
+
+[report]
+fail_under = 100
+show_missing = True
